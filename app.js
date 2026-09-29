@@ -11,7 +11,8 @@ let state = {
         reroll: 0,
         return: 0,
         plus1: 0
-    }
+    },
+    bonusMarks: [] // 0: none, 1: circled (unlocked), 2: crossed (used)
 };
 
 let stateHistory = [];
@@ -36,10 +37,10 @@ const yellowLayout = [
 const greenMults = [2, 2, 2, 1, 3, 3, 3, 2, 3, 1, 4, 1]; 
 
 const bPts = [0, 1, 3, 6, 10, 15, 21, 28, 36, 45, 55, 66, 78];
-const bBonuses = ['', '🔙', '<span class="badge-y">?</span>', '', '➕1', '🔄', '<span class="badge-p">?</span>', '', '🦊', '🔙', '', '<span class="badge-g">?</span>'];
+const bBonuses = ['', '🔄', '<span class="badge-y">?</span>', '', '+1', '🔙', '<span class="badge-p">?</span>', '', '🦊', '🔄', '', '<span class="badge-g">?</span>'];
 
-const pConds = ['', '', '≥2', '≥3', '≥4', '≥5', '≥6', '≥2', '≥3', '≥4', '≥5', '≥6'];
-const pBonuses = ['', '', '🔄', '🔙', '➕1', '<span class="badge-g">?</span>', '<span class="badge-y">?</span>', '🦊', '<span class="badge-s">?</span>', '🔄', '<span class="badge-b">?</span>', '<span class="badge-y">?</span>'];
+const pConds = ['', '', '>=2', '>=3', '>=4', '>=5', '>=6', '<=2', '<=3', '<=4', '<=5', '<=6'];
+const pBonuses = ['', '', '🔄', '🔙', '+1', '<span class="badge-g">?</span>', '<span class="badge-y">?</span>', '🦊', '<span class="badge-s">?</span>', '🔄', '<span class="badge-b">?</span>', '<span class="badge-y">?</span>'];
 
 let currentAction = null; 
 
@@ -58,6 +59,7 @@ function loadState() {
     if (saved) {
         let loaded = JSON.parse(saved);
         if(loaded.usedActions) state = loaded;
+        if(!state.bonusMarks) state.bonusMarks = [];
     }
 }
 
@@ -118,18 +120,18 @@ function renderZones() {
     for (let i=0; i<12; i++) {
         blueHtml += `
             <div class="col-container">
-                <span class="track-score-label">${bPts[i+1]}</span>
+                <span class="track-score-label star-label">${bPts[i+1]}</span>
                 <div class="box-btn blue-btn" data-i="${i}"></div>
-                <span class="bonus-label-bottom">${bBonuses[i]}</span>
+                <span class="bonus-label-bottom clickable-bonus" data-bid="b-${i}">${bBonuses[i]}</span>
             </div>
         `;
-        if(i < 11) blueHtml += `<span class="track-separator">≥</span>`;
+        if(i < 11) blueHtml += `<span class="track-separator">&ge;</span>`;
     }
     document.querySelector('.blue-track').innerHTML = blueHtml;
 
     // Green
     let greenHtml = '';
-    const gB = ['','🔄','','<span class="badge-b">?</span>','🔙','','🦊','<span class="badge-s">?</span>','➕1','','<span class="badge-p">?</span>','<span class="badge-y">?</span>'];
+    const gB = ['', '+1', '', '<span class="badge-b">?</span>', '🦊', '', '🔄', '<span class="badge-s">?</span>', '🔙', '', '<span class="badge-p">?</span>', '<span class="badge-y">?</span>'];
     for (let p=0; p<6; p++) {
         let m1 = greenMults[p*2];
         let m2 = greenMults[p*2+1];
@@ -139,13 +141,13 @@ function renderZones() {
                 <div class="col-container">
                     <span class="green-mult">x${m1}</span>
                     <div class="box-btn green-btn" data-i="${p*2}"></div>
-                    <span class="bonus-label-bottom">${gB[p*2]}</span>
+                    <span class="bonus-label-bottom clickable-bonus" data-bid="g-${p*2}">${gB[p*2]}</span>
                 </div>
                 <span class="green-minus">-</span>
                 <div class="col-container">
                     <span class="green-mult">x${m2}</span>
                     <div class="box-btn green-btn" data-i="${p*2+1}"></div>
-                    <span class="bonus-label-bottom">${gB[p*2+1]}</span>
+                    <span class="bonus-label-bottom clickable-bonus" data-bid="g-${p*2+1}">${gB[p*2+1]}</span>
                 </div>
             </div>
         `;
@@ -159,7 +161,7 @@ function renderZones() {
             <div class="col-container">
                 <span class="bonus-label-top">${pConds[i] || '&nbsp;'}</span>
                 <div class="box-btn pink-btn" data-i="${i}"></div>
-                <span class="bonus-label-bottom">${pBonuses[i]}</span>
+                <span class="bonus-label-bottom clickable-bonus" data-bid="p-${i}">${pBonuses[i]}</span>
             </div>
         `;
         if(i < 11) pinkHtml += `<span class="track-separator"></span>`;
@@ -167,13 +169,77 @@ function renderZones() {
     document.querySelector('.pink-track').innerHTML = pinkHtml;
 }
 
+function meetsPinkCondition(idx) {
+    let v = state.pink[idx];
+    if (v === 0) return false;
+    if (idx === 2 && v < 2) return false;
+    if (idx === 3 && v < 3) return false;
+    if (idx === 4 && v < 4) return false;
+    if (idx === 5 && v < 5) return false;
+    if (idx === 6 && v < 6) return false;
+    if (idx === 7 && v > 2) return false;
+    if (idx === 8 && v > 3) return false;
+    if (idx === 9 && v > 4) return false;
+    if (idx === 10 && v > 5) return false;
+    if (idx === 11 && v > 6) return false;
+    return true;
+}
+
+function isActionBonusEarned(bid) {
+    if(!bid) return false;
+    const actionBids = ['b-1', 'b-3', 'b-7', 'g-1', 'g-6', 'g-8', 'p-2', 'p-3', 'p-4', 'p-9', 's-c-0', 'y-c-0', 'y-c-1', 'y-r-1'];
+    if (!actionBids.includes(bid)) return false;
+    if (bid.startsWith('b-')) return state.blue[parseInt(bid.split('-')[1])];
+    if (bid.startsWith('g-')) return state.green[parseInt(bid.split('-')[1])] > 0;
+    if (bid.startsWith('p-')) return meetsPinkCondition(parseInt(bid.split('-')[1]));
+    if (bid.startsWith('s-c-')) {
+        let c = parseInt(bid.split('-')[2]);
+        let r0 = (c===2) ? true : state.silver[0][c];
+        let r1 = (c===3) ? true : state.silver[1][c];
+        let r2 = (c===0) ? true : state.silver[2][c];
+        let r3 = (c===4) ? true : state.silver[3][c];
+        return r0 && r1 && r2 && r3;
+    }
+    if (bid.startsWith('y-r-')) {
+        let r = parseInt(bid.split('-')[2]);
+        let y = state.yellow;
+        if (r===0) return y[0]>=1 && y[1]>=1;
+        if (r===1) return y[2]>=1 && y[3]>=1;
+        if (r===2) return y[4]>=1 && y[5]>=1;
+        if (r===3) return y[6]>=1 && y[7]>=1;
+        if (r===4) return y[8]>=1 && y[9]>=1;
+    }
+    if (bid.startsWith('y-c-')) {
+        let c = parseInt(bid.split('-')[2]);
+        let y = state.yellow;
+        if (c===0) return y[2]>=1 && y[6]>=1;
+        if (c===1) return y[0]>=1 && y[4]>=1 && y[8]>=1;
+        if (c===2) return y[3]>=1 && y[7]>=1;
+        if (c===3) return y[1]>=1 && y[5]>=1 && y[9]>=1;
+    }
+    return false;
+}
+
 function updateUI() {
+    document.querySelectorAll('.clickable-bonus').forEach((el, idx) => {
+        let bid = el.getAttribute('data-bid');
+        let val = state.bonusMarks[idx] || 0;
+        
+        el.classList.remove('highlighted', 'crossed');
+        if (val === 2 || isActionBonusEarned(bid)) {
+            el.classList.add('crossed');
+        } else if (val === 1) {
+            el.classList.add('highlighted');
+        }
+    });
+
     // Undo button
     const undoBtn = document.getElementById('undo-btn');
     if (undoBtn) undoBtn.disabled = stateHistory.length === 0;
 
     // Round
-    document.getElementById('round-display').innerText = `Tour: ${state.round} / 6`;
+    const roundBonuses = ["", "🔄", "+1", "🔙", "?", "", ""];
+    document.getElementById('round-display').innerText = `Tour: ${state.round} / 6 (Bonus: ${roundBonuses[state.round] || "Aucun"})`;
 
     // Trackers
     const earned = getEarnedActions();
@@ -233,11 +299,11 @@ function updateUI() {
         const badge = document.getElementById(`g-badge-${p}`);
         let v1 = state.green[p*2];
         let v2 = state.green[p*2+1];
+        badge.style.display = 'flex';
         if(v1 && v2) {
             badge.innerText = (v1 * greenMults[p*2]) - (v2 * greenMults[p*2+1]);
-            badge.style.display = 'flex';
         } else {
-            badge.style.display = 'none';
+            badge.innerText = "";
         }
     }
 
@@ -253,6 +319,21 @@ function updateUI() {
 }
 
 function setupEvents() {
+    document.addEventListener('click', (e) => {
+        const bonus = e.target.closest('.clickable-bonus');
+        if (bonus) {
+            pushHistory();
+            const allBonuses = Array.from(document.querySelectorAll('.clickable-bonus'));
+            const idx = allBonuses.indexOf(bonus);
+            if (idx !== -1) {
+                while(state.bonusMarks.length <= idx) state.bonusMarks.push(0);
+                state.bonusMarks[idx] = (state.bonusMarks[idx] === 2) ? 0 : 2;
+                saveState();
+                updateUI();
+            }
+        }
+    });
+
     document.getElementById('undo-btn').addEventListener('click', () => {
         if (stateHistory.length > 0) {
             state = stateHistory.pop();
@@ -370,7 +451,7 @@ function setupEvents() {
                         if(state.blue[k] > 0) { maxAllowed = state.blue[k]; break; }
                     }
                     if (val > maxAllowed) {
-                        alert('En zone bleue, la valeur doit être inférieure ou égale à la précédente !');
+                        alert('En zone bleue, la valeur doit Ãªtre infÃ©rieure ou Ã©gale Ã  la prÃ©cÃ©dente !');
                         return;
                     }
                 }
@@ -392,9 +473,12 @@ function setupEvents() {
                 blue: Array(12).fill(0),
                 green: Array(12).fill(0),
                 pink: Array(12).fill(0),
-                usedActions: { reroll: 0, return: 0, plus1: 0 }
+                usedActions: { reroll: 0, return: 0, plus1: 0 },
+                bonusMarks: []
             };
             saveState();
+            renderZones();
+            updateUI();
         }
     });
 }
