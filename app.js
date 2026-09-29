@@ -37,7 +37,7 @@ const yellowLayout = [
 const greenMults = [2, 2, 2, 1, 3, 3, 3, 2, 3, 1, 4, 1]; 
 
 const bPts = [0, 1, 3, 6, 10, 15, 21, 28, 36, 45, 55, 66, 78];
-const bBonuses = ['', '🔄', '<span class="badge-y">?</span>', '', '+1', '🔙', '<span class="badge-p">?</span>', '', '🦊', '🔄', '', '<span class="badge-g">?</span>'];
+const bBonuses = ['', '🔙', '<span class="badge-y">?</span>', '', '+1', '🔄', '<span class="badge-p">?</span>', '', '🦊', '🔙', '', '<span class="badge-g">?</span>'];
 
 const pConds = ['', '', '>=2', '>=3', '>=4', '>=5', '>=6', '<=2', '<=3', '<=4', '<=5', '<=6'];
 const pBonuses = ['', '', '🔄', '🔙', '+1', '<span class="badge-g">?</span>', '<span class="badge-y">?</span>', '🦊', '<span class="badge-s">?</span>', '🔄', '<span class="badge-b">?</span>', '<span class="badge-y">?</span>'];
@@ -131,7 +131,7 @@ function renderZones() {
 
     // Green
     let greenHtml = '';
-    const gB = ['', '+1', '', '<span class="badge-b">?</span>', '🦊', '', '🔄', '<span class="badge-s">?</span>', '🔙', '', '<span class="badge-p">?</span>', '<span class="badge-y">?</span>'];
+    const gB = ['', '🔄', '', '<span class="badge-b">?</span>', '🔙', '', '🦊', '<span class="badge-s">?</span>', '+1', '', '<span class="badge-p">?</span>', '<span class="badge-y">?</span>'];
     for (let p=0; p<6; p++) {
         let m1 = greenMults[p*2];
         let m2 = greenMults[p*2+1];
@@ -187,7 +187,7 @@ function meetsPinkCondition(idx) {
 
 function isActionBonusEarned(bid) {
     if(!bid) return false;
-    const actionBids = ['b-1', 'b-3', 'b-7', 'g-1', 'g-6', 'g-8', 'p-2', 'p-3', 'p-4', 'p-9', 's-c-0', 'y-c-0', 'y-c-1', 'y-r-1'];
+    const actionBids = ['b-1', 'b-4', 'b-5', 'b-8', 'b-9', 'g-1', 'g-4', 'g-6', 'g-8', 'p-2', 'p-3', 'p-4', 'p-7', 'p-9', 's-c-0', 's-c-2', 'y-c-0', 'y-c-1', 'y-c-3', 'y-r-1'];
     if (!actionBids.includes(bid)) return false;
     if (bid.startsWith('b-')) return state.blue[parseInt(bid.split('-')[1])];
     if (bid.startsWith('g-')) return state.green[parseInt(bid.split('-')[1])] > 0;
