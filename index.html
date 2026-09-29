@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Scorepad Futé</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#222">
+</head>
+<body>
+    <header>
+        <div class="header-left">
+            <h1>Assistant Scorepad</h1>
+        </div>
+        <div class="round-tracker">
+            <button id="prev-round" class="round-btn">◀</button>
+            <span id="round-display">Tour: 1 / 6</span>
+            <button id="next-round" class="round-btn">▶</button>
+        </div>
+        <button id="reset-btn">Nouvelle Partie</button>
+    </header>
+
+    <main>
+        <!-- Scores Summary -->
+        <div class="scores-bar">
+            <div class="score-box silver-score">⬜ <span id="s-score">0</span></div>
+            <div class="score-box yellow-score">🟨 <span id="y-score">0</span></div>
+            <div class="score-box blue-score">🟦 <span id="b-score">0</span></div>
+            <div class="score-box green-score">🟩 <span id="g-score">0</span></div>
+            <div class="score-box pink-score">🟪 <span id="p-score">0</span></div>
+            <div class="score-box fox-score">🦊 <span id="f-count">0</span>x<span id="f-min">0</span> = <span id="f-score">0</span></div>
+            <div class="score-box total-score-box">Total: <span id="total-score">0</span></div>
+        </div>
+
+        <!-- Action Trackers -->
+        <div class="trackers-container">
+            <div class="tracker-group">
+                <span class="tracker-icon">🔄</span>
+                <div class="tracker-circles" id="tracker-reroll"></div>
+            </div>
+            <div class="tracker-group">
+                <span class="tracker-icon">🔙</span>
+                <div class="tracker-circles" id="tracker-return"></div>
+            </div>
+            <div class="tracker-group">
+                <span class="tracker-icon">➕1</span>
+                <div class="tracker-circles" id="tracker-plus1"></div>
+            </div>
+        </div>
+
+        <div class="zones-container">
+            
+            <div class="top-zones-wrapper">
+                <!-- Silver Zone -->
+                <div class="zone silver-zone">
+                    <div class="silver-bonuses">
+                        <span>➕1</span><span class="badge-y">?</span><span>🦊</span><span class="badge-b">?</span><span class="badge-g">?</span><span class="badge-p">?</span>
+                    </div>
+                    <div class="silver-grid"></div>
+                    <div class="silver-scores">
+                        <span>1=2</span><span>2=4</span><span>3=7</span><span>4=11</span><span>5=16</span><span>6=22</span>
+                    </div>
+                </div>
+                
+                <!-- Yellow Zone -->
+                <div class="zone yellow-zone">
+                    <div class="yellow-scores">
+                        <span>3</span><span>10</span><span>21</span><span>36</span><span>55</span><span>75</span><span>96</span><span>118</span><span>141</span><span>165</span>
+                    </div>
+                    <div class="yellow-grid-wrapper">
+                        <div class="yellow-grid"></div>
+                        <div class="yellow-row-bonuses">
+                            <span class="badge-b">?</span><span>🔙</span><span class="badge-y">?</span><span class="badge-g">?</span><span class="badge-p">?</span>
+                        </div>
+                    </div>
+                    <div class="yellow-col-bonuses">
+                        <span>🔄</span><span>➕1</span><span class="badge-s">?</span><span>🦊</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Blue Zone -->
+            <div class="zone blue-zone">
+                <div class="track blue-track"></div>
+            </div>
+            
+            <!-- Green Zone -->
+            <div class="zone green-zone">
+                <div class="track green-track"></div>
+            </div>
+            
+            <!-- Pink Zone -->
+            <div class="zone pink-zone">
+                <div class="track pink-track"></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal Numpad -->
+    <div id="numpad-modal" class="modal hidden">
+        <div class="numpad">
+            <div class="numpad-header">Saisir une valeur</div>
+            <div class="numpad-grid">
+                <button class="num-btn" data-val="1">1</button>
+                <button class="num-btn" data-val="2">2</button>
+                <button class="num-btn" data-val="3">3</button>
+                <button class="num-btn" data-val="4">4</button>
+                <button class="num-btn" data-val="5">5</button>
+                <button class="num-btn" data-val="6">6</button>
+                <button class="num-btn" data-val="7">7</button>
+                <button class="num-btn" data-val="8">8</button>
+                <button class="num-btn" data-val="9">9</button>
+                <button class="num-btn" data-val="10">10</button>
+                <button class="num-btn" data-val="11">11</button>
+                <button class="num-btn" data-val="12">12</button>
+            </div>
+            <button id="cancel-btn">Annuler</button>
+            <button id="clear-btn">Effacer</button>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
