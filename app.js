@@ -14,6 +14,12 @@ let state = {
     }
 };
 
+let stateHistory = [];
+function pushHistory() {
+    stateHistory.push(JSON.parse(JSON.stringify(state)));
+    if (stateHistory.length > 50) stateHistory.shift(); // keep last 50
+}
+
 const yellowLayout = [
     [null, {i:0, v:3}, null, {i:1, v:6}],
     [{i:2, v:1}, null, {i:3, v:2}, null],
@@ -162,6 +168,10 @@ function renderZones() {
 }
 
 function updateUI() {
+    // Undo button
+    const undoBtn = document.getElementById('undo-btn');
+    if (undoBtn) undoBtn.disabled = stateHistory.length === 0;
+
     // Round
     document.getElementById('round-display').innerText = `Tour: ${state.round} / 6`;
 
@@ -243,15 +253,24 @@ function updateUI() {
 }
 
 function setupEvents() {
+    document.getElementById('undo-btn').addEventListener('click', () => {
+        if (stateHistory.length > 0) {
+            state = stateHistory.pop();
+            saveState();
+        }
+    });
+
     // Rounds
     document.getElementById('prev-round').addEventListener('click', () => {
         if(state.round > 1) {
+            pushHistory();
             state.round--;
             saveState();
         }
     });
     document.getElementById('next-round').addEventListener('click', () => {
         if(state.round < 6) {
+            pushHistory();
             state.round++;
             saveState();
         }
@@ -266,10 +285,10 @@ function setupEvents() {
                 let used = state.usedActions[type];
                 
                 if (e.target.classList.contains('circled') && !e.target.classList.contains('crossed')) {
-                    if (used < earned) state.usedActions[type]++;
+                    if (used < earned) { pushHistory(); state.usedActions[type]++; }
                 } 
                 else if (e.target.classList.contains('crossed')) {
-                    if (used > 0) state.usedActions[type]--;
+                    if (used > 0) { pushHistory(); state.usedActions[type]--; }
                 }
                 saveState();
             }
@@ -279,6 +298,7 @@ function setupEvents() {
     // Silver
     document.querySelector('.silver-zone').addEventListener('click', e => {
         if(e.target.classList.contains('silver-btn')) {
+            pushHistory();
             let r = parseInt(e.target.dataset.r);
             let c = parseInt(e.target.dataset.c);
             state.silver[r][c] = !state.silver[r][c];
@@ -289,6 +309,7 @@ function setupEvents() {
     // Yellow
     document.querySelector('.yellow-zone').addEventListener('click', e => {
         if(e.target.classList.contains('yellow-btn')) {
+            pushHistory();
             let i = parseInt(e.target.dataset.i);
             state.yellow[i] = (state.yellow[i] + 1) % 3;
             saveState();
@@ -332,6 +353,7 @@ function setupEvents() {
 
     document.getElementById('clear-btn').addEventListener('click', () => {
         if (currentAction) {
+            pushHistory();
             state[currentAction.zone][currentAction.i] = 0;
             saveState();
         }
@@ -352,6 +374,7 @@ function setupEvents() {
                         return;
                     }
                 }
+                pushHistory();
                 state[currentAction.zone][currentAction.i] = val;
                 saveState();
             }
@@ -361,6 +384,7 @@ function setupEvents() {
 
     document.getElementById('reset-btn').addEventListener('click', () => {
         if(confirm('Nouvelle partie ?')) {
+            pushHistory();
             state = {
                 round: 1,
                 silver: Array(4).fill(0).map(() => Array(6).fill(false)),

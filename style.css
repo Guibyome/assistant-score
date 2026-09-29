@@ -22,7 +22,11 @@ header {
     display: flex; justify-content: space-between; align-items: center;
     padding: 10px 20px; background: #111; position: sticky; top: 0; z-index: 100;
 }
+.header-left { display: flex; align-items: center; gap: 15px; }
 header h1 { margin: 0; font-size: 1.5rem; }
+.icon-btn { background: #444; border: 1px solid #555; color: white; border-radius: 50%; width: 36px; height: 36px; cursor: pointer; display: flex; justify-content: center; align-items: center; font-size: 1.2rem; transition: background 0.2s; }
+.icon-btn:active { background: #666; transform: scale(0.95); }
+.icon-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 .round-tracker { display: flex; align-items: center; gap: 15px; background: #333; padding: 6px 15px; border-radius: 20px; font-weight: bold; font-size: 1.1rem; }
 .round-btn { background: transparent; border: none; color: #fff; cursor: pointer; font-size: 1.4rem; padding: 0; }
 .round-btn:active { transform: scale(0.9); }
@@ -170,12 +174,20 @@ header h1 { margin: 0; font-size: 1.5rem; }
     
     .box-btn { font-size: 1.3rem; }
     .tracker-circle { width: 24px; height: 24px; font-size: 1rem; }
-    .trackers-container { gap: 20px; }
+    
+    /* Fix centering overflow issue on mobile */
+    .trackers-container { 
+        justify-content: flex-start; 
+        gap: 20px; 
+        padding-left: 20px; 
+    }
+    .scores-bar { justify-content: flex-start; }
     
     .badge-y, .badge-b, .badge-g, .badge-p, .badge-s {
         width: 18px; height: 18px; line-height: 16px; font-size: 0.75rem;
     }
     
+    .silver-bonuses, .silver-scores { font-size: 0.75rem; white-space: nowrap; }
     .yellow-scores { font-size: 0.8rem; }
     .track-score-label, .bonus-label-top { font-size: 0.8rem; }
     .bonus-label-bottom { font-size: 0.9rem; }
