@@ -1,24 +1,24 @@
 :root {
     --bg-dark: #1e1e24;
     --text-light: #f5f5f5;
-    
+
     /* Couleurs de base pour le texte ou icônes */
     --silver-bg: #808890;
     --yellow-bg: #dca337;
     --blue-bg: #3b82f6;
     --green-bg: #22c55e;
     --pink-bg: #ec4899;
-    
+
     /* Dégradés stylisés pour les zones */
     --silver-grad: linear-gradient(145deg, #9ca3af, #6b7280);
     --yellow-grad: linear-gradient(145deg, #fde047, #ca8a04);
     --blue-grad: linear-gradient(145deg, #60a5fa, #2563eb);
     --green-grad: linear-gradient(145deg, #4ade80, #16a34a);
     --pink-grad: linear-gradient(145deg, #f472b6, #db2777);
-    
-    --box-size: 46px;      
-    --box-gap: 10px;       
-    --grid-step: 56px;     
+
+    --box-size: 46px;
+    --box-gap: 10px;
+    --grid-step: 56px;
 }
 
 * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
@@ -31,10 +31,10 @@ header {
 }
 .header-left { display: flex; align-items: center; gap: 15px; }
 header h1 { margin: 0; font-size: 1.5rem; letter-spacing: 0.5px; }
-.icon-btn { 
-    background: linear-gradient(145deg, #555, #333); border: none; color: white; 
-    border-radius: 50%; width: 38px; height: 38px; cursor: pointer; 
-    display: flex; justify-content: center; align-items: center; font-size: 1.2rem; 
+.icon-btn {
+    background: linear-gradient(145deg, #555, #333); border: none; color: white;
+    border-radius: 50%; width: 38px; height: 38px; cursor: pointer;
+    display: flex; justify-content: center; align-items: center; font-size: 1.2rem;
     transition: all 0.2s; box-shadow: 0 3px 5px rgba(0,0,0,0.3);
 }
 .icon-btn:active { transform: translateY(2px) scale(0.95); box-shadow: 0 1px 2px rgba(0,0,0,0.3); }
@@ -48,8 +48,8 @@ header h1 { margin: 0; font-size: 1.5rem; letter-spacing: 0.5px; }
 
 /* Barres Supérieures */
 .scores-bar { display: flex; justify-content: center; gap: 15px; padding: 15px; background: #1a1a20; overflow-x: auto; border-bottom: 1px solid #333; align-items: center; }
-.score-box { 
-    padding: 8px 14px; border-radius: 12px; font-weight: bold; font-size: 1.1rem; white-space: nowrap; box-shadow: 0 3px 6px rgba(0,0,0,0.2); 
+.score-box {
+    padding: 8px 14px; border-radius: 12px; font-weight: bold; font-size: 1.1rem; white-space: nowrap; box-shadow: 0 3px 6px rgba(0,0,0,0.2);
     display: flex; align-items: center; gap: 6px;
 }
 .silver-score { background: var(--silver-grad); color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.4); }
@@ -83,20 +83,21 @@ header h1 { margin: 0; font-size: 1.5rem; letter-spacing: 0.5px; }
 .track-score-label.star-label::after { background: var(--blue-grad); }
 
 .score-pair { display: flex; align-items: flex-end; position: relative; }
-.cross-count { 
+.cross-count {
     font-size: 0.75rem; font-weight: 900; margin-right: -8px; margin-bottom: -2px; z-index: 2;
-    background: rgba(0,0,0,0.6); color: white; border-radius: 50%; width: 16px; height: 16px; 
+    background: rgba(0,0,0,0.6); color: white; border-radius: 50%; width: 16px; height: 16px;
     display: flex; justify-content: center; align-items: center; border: 1px solid #fff; box-shadow: 0 1px 2px rgba(0,0,0,0.4);
 }
 
 .trackers-container {
-    display: flex; gap: 40px; padding: 20px; background: #202026; 
+    display: flex; gap: 40px; padding: 20px; background: #202026;
     border-bottom: 1px solid #111; overflow-x: auto; justify-content: center;
 }
 .tracker-group { display: flex; align-items: center; gap: 12px; }
 .tracker-icon { font-size: 1.5rem; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
 .tracker-circles { display: flex; gap: 8px; }
 .tracker-circle {
+    position: relative;
     width: 28px; height: 28px; border-radius: 50%; border: none;
     background: linear-gradient(145deg, #3a3a40, #1a1a20);
     box-shadow: inset 0 3px 5px rgba(0,0,0,0.5), 0 2px 3px rgba(255,255,255,0.05);
@@ -104,10 +105,10 @@ header h1 { margin: 0; font-size: 1.5rem; letter-spacing: 0.5px; }
     color: white; font-size: 1.2rem; font-weight: bold; user-select: none;
     transition: all 0.2s;
 }
-.tracker-circle.circled { 
-    background: linear-gradient(145deg, #ffffff, #e0e0e0); 
-    color: #000; 
-    box-shadow: 0 2px 8px rgba(255,255,255,0.3); 
+.tracker-circle.circled {
+    background: linear-gradient(145deg, #ffffff, #e0e0e0);
+    color: #000;
+    box-shadow: 0 2px 8px rgba(255,255,255,0.3);
 }
 .tracker-circle.crossed::after { content: 'X'; color: #ef4444; position: absolute; font-size: 1.4rem; text-shadow: none; font-weight: 900; }
 
@@ -115,10 +116,10 @@ header h1 { margin: 0; font-size: 1.5rem; letter-spacing: 0.5px; }
 .top-zones-wrapper { display: flex; gap: 25px; flex-wrap: wrap; justify-content: center; }
 
 /* Zones 3D */
-.zone { 
-    padding: 20px; border-radius: 24px; 
-    box-shadow: inset 0 2px 5px rgba(255,255,255,0.3), 0 8px 20px rgba(0,0,0,0.5); 
-    overflow-x: auto; width: max-content; max-width: 100%; 
+.zone {
+    padding: 20px; border-radius: 24px;
+    box-shadow: inset 0 2px 5px rgba(255,255,255,0.3), 0 8px 20px rgba(0,0,0,0.5);
+    overflow-x: auto; width: max-content; max-width: 100%;
 }
 .silver-zone { background: var(--silver-grad); flex: 0 0 auto; min-width: 0; }
 .yellow-zone { background: var(--yellow-grad); flex: 0 0 auto; min-width: 0; }
@@ -137,9 +138,9 @@ header h1 { margin: 0; font-size: 1.5rem; letter-spacing: 0.5px; }
     transition: transform 0.1s, opacity 0.2s, box-shadow 0.1s;
     box-shadow: 0 4px 8px rgba(0,0,0,0.15), inset 0 -3px 0 rgba(0,0,0,0.08);
 }
-.box-btn:active { 
-    transform: translateY(3px) scale(0.96); 
-    box-shadow: 0 1px 2px rgba(0,0,0,0.15), inset 0 2px 4px rgba(0,0,0,0.1); 
+.box-btn:active {
+    transform: translateY(3px) scale(0.96);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.15), inset 0 2px 4px rgba(0,0,0,0.1);
 }
 .box-btn.disabled-btn { opacity: 0.35; cursor: not-allowed; pointer-events: none; }
 
@@ -171,14 +172,14 @@ header h1 { margin: 0; font-size: 1.5rem; letter-spacing: 0.5px; }
 /* Yellow */
 .yellow-scores { display: flex; justify-content: space-between; font-size: 1.05rem; font-weight: 900; color: #111; margin-bottom: 10px; padding: 0 5px; text-shadow: 0 1px 1px rgba(255,255,255,0.4); }
 .yellow-grid-wrapper { display: flex; align-items: center; gap: 12px; }
-.yellow-grid { 
-    display: grid; 
-    grid-template-columns: repeat(4, var(--box-size)); 
-    gap: var(--box-gap); 
-    background-image: 
+.yellow-grid {
+    display: grid;
+    grid-template-columns: repeat(4, var(--box-size));
+    gap: var(--box-gap);
+    background-image:
         linear-gradient(to bottom, transparent 22px, rgba(255,255,255,0.55) 22px, rgba(255,255,255,0.55) 24px, transparent 24px),
         linear-gradient(to right, transparent 22px, rgba(255,255,255,0.55) 22px, rgba(255,255,255,0.55) 24px, transparent 24px);
-    background-size: var(--grid-step) var(--grid-step); 
+    background-size: var(--grid-step) var(--grid-step);
     background-position: 0 0;
 }
 .yellow-empty { width: var(--box-size); height: var(--box-size); }
@@ -202,7 +203,7 @@ header h1 { margin: 0; font-size: 1.5rem; letter-spacing: 0.5px; }
 .green-mult { font-size: 1rem; color: #fff; margin-bottom: 4px; font-weight: 900; text-shadow: 0 1px 2px rgba(0,0,0,0.4); }
 
 /* CERCLE POINTU (Star Seal) via Clip-Path */
-.green-score-badge { 
+.green-score-badge {
     position: absolute; top: -18px; left: 50%; transform: translateX(-50%);
     width: 36px; height: 36px; color: #fff; z-index: 10;
     font-size: 1.1rem; display: flex; justify-content: center; align-items: center; font-weight: 900;
@@ -225,11 +226,11 @@ header h1 { margin: 0; font-size: 1.5rem; letter-spacing: 0.5px; }
 .numpad { background: linear-gradient(to bottom, #ffffff, #f4f4f5); width: 100%; max-width: 500px; border-radius: 35px 35px 0 0; padding: 30px; display: flex; flex-direction: column; gap: 20px; box-shadow: 0 -10px 30px rgba(0,0,0,0.5); }
 .numpad-header { color: #333; font-weight: 900; text-align: center; font-size: 1.4rem; letter-spacing: 0.5px; }
 .numpad-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
-.num-btn { 
+.num-btn {
     padding: 20px; font-size: 2rem; background: #fff; font-weight: bold;
-    border: none; border-radius: 20px; cursor: pointer; color: #1f2937; 
+    border: none; border-radius: 20px; cursor: pointer; color: #1f2937;
     box-shadow: 0 4px 6px rgba(0,0,0,0.1), inset 0 -4px 0 rgba(0,0,0,0.05);
-    transition: transform 0.1s; 
+    transition: transform 0.1s;
 }
 .num-btn:active { transform: translateY(4px); box-shadow: 0 0px 2px rgba(0,0,0,0.1); }
 .num-btn.hidden { display: none; }
@@ -245,24 +246,24 @@ header h1 { margin: 0; font-size: 1.5rem; letter-spacing: 0.5px; }
         --box-gap: 8px;
         --grid-step: 46px;
     }
-    
+
     header { padding: 10px 15px; }
     header h1 { font-size: 1.2rem; }
     .icon-btn { width: 34px; height: 34px; font-size: 1.1rem; }
     .round-tracker { font-size: 1rem; padding: 6px 12px; }
     .score-box { font-size: 0.95rem; padding: 6px 10px; }
-    
+
     .box-btn { font-size: 1.4rem; border-radius: 10px; }
     .tracker-circle { width: 26px; height: 26px; font-size: 1.1rem; }
-    
+
     /* Fix centering overflow issue on mobile */
     .trackers-container { justify-content: flex-start; gap: 25px; padding-left: 20px; }
     .scores-bar { justify-content: flex-start; }
-    
+
     .badge-y, .badge-b, .badge-g, .badge-p, .badge-s {
         width: 20px; height: 20px; line-height: 20px; font-size: 0.8rem; border-radius: 4px;
     }
-    
+
     .silver-bonuses, .silver-scores { font-size: 0.8rem; white-space: nowrap; }
     .star-label { width: 28px; height: 28px; min-height: 28px; font-size: 0.75rem; }
     .yellow-scores { font-size: 0.85rem; }
@@ -270,10 +271,10 @@ header h1 { margin: 0; font-size: 1.5rem; letter-spacing: 0.5px; }
     .bonus-label-bottom { font-size: 1.05rem; }
     .green-minus { font-size: 1.4rem; margin-bottom: 20px; }
     .green-score-badge { width: 28px; height: 28px; font-size: 0.95rem; top: -14px; }
-    
+
     .zone { padding: 15px; border-radius: 18px; }
     .green-pair { padding: 6px; border-radius: 15px; }
-    
+
     .numpad { padding: 20px; border-radius: 25px 25px 0 0; }
     .num-btn { padding: 15px; font-size: 1.6rem; border-radius: 16px; }
     #cancel-btn, #clear-btn { padding: 15px; font-size: 1.2rem; border-radius: 16px; }
