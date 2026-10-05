@@ -175,7 +175,24 @@ header h1 { margin: 0; font-size: 1.5rem; letter-spacing: 0.5px; }
 .badge-s { background: linear-gradient(145deg, #9ca3af, #6b7280); }
 
 /* La grosse croix rouge stylisée */
-.crossed::before { content: '✘'; position: absolute; color: #ef4444; font-size: 2.8rem; pointer-events: none; opacity: 0.9; z-index: 2; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+.crossed::before {
+    content: '✘';
+    position: absolute;
+
+    /* 1. On cloue la croix au milieu pour empêcher le glissement au scroll */
+    top: 50%;
+    left: 50%;
+
+    /* 2. On triche un tout petit peu sur la hauteur (-55% au lieu de -50%) pour compenser le décalage naturel de ce caractère vers le bas */
+    transform: translate(-50%, -55%);
+
+    color: #ef4444;
+    font-size: 2.8rem;
+    pointer-events: none;
+    opacity: 0.9;
+    z-index: 2;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
 .circled { border: 4px solid #111; border-radius: 50%; }
 
 /* Silver */
