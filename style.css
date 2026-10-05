@@ -403,3 +403,25 @@ header h1 { margin: 0; font-size: 1.5rem; letter-spacing: 0.5px; }
     opacity: 1;
     transform: translateY(0) scale(1);
 }
+
+/* --- B. Scroll tactile fluide pour mobile --- */
+.zone, .trackers-container, .scores-bar {
+    -webkit-overflow-scrolling: touch; /* Indispensable pour Safari/iOS */
+}
+
+/* --- C. FIX DÉFINITIF : Les croix qui se détachent --- */
+/* Remplace tes anciennes règles .crossed::before et ::after par celles-ci : */
+
+.box-btn.crossed::before {
+    content: '✘'; position: absolute;
+    /* Ces 3 lignes fixent la croix au centre géographique de la case à 100% */
+    top: 50%; left: 50%; transform: translate(-50%, -50%);
+    color: #ef4444; font-size: 2.8rem; pointer-events: none; opacity: 0.9; z-index: 2; text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.tracker-circle.crossed::after {
+    content: 'X'; color: #ef4444; position: absolute;
+    /* Idem pour les petits ronds des actions */
+    top: 50%; left: 50%; transform: translate(-50%, -50%);
+    font-size: 1.4rem; text-shadow: none; font-weight: 900;
+}
