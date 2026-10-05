@@ -35,19 +35,27 @@
         </div>
 
         <!-- Action Trackers -->
+        <div class="sticky-top">
         <div class="trackers-container">
             <div class="tracker-group">
                 <span class="tracker-icon">🔄</span>
                 <div class="tracker-circles" id="tracker-reroll"></div>
+                <!-- Bonus 6e Relance = Renard -->
+                <span class="clickable-bonus" style="font-size: 1.4rem;" data-bid="t-reroll">🦊</span>
             </div>
             <div class="tracker-group">
                 <span class="tracker-icon">🔙</span>
                 <div class="tracker-circles" id="tracker-return"></div>
+                <!-- Bonus 6e Retour = Case Rose -->
+                <span class="badge-p clickable-bonus" data-bid="t-return">?</span>
             </div>
             <div class="tracker-group">
                 <span class="tracker-icon">➕1</span>
                 <div class="tracker-circles" id="tracker-plus1"></div>
+                <!-- Bonus 6e +1 = Case Grise -->
+                <span class="badge-s clickable-bonus" data-bid="t-plus1">?</span>
             </div>
+        </div>
         </div>
 
         <div class="zones-container">
@@ -55,8 +63,13 @@
             <div class="top-zones-wrapper">
                 <!-- Silver Zone -->
                 <div class="zone silver-zone">
-                                        <div class="silver-bonuses">
-                        <span class="bonus-label-top clickable-bonus" data-bid="s-c-0">+1</span><span class="bonus-label-top badge-y clickable-bonus" data-bid="s-c-1">?</span><span class="fox-badge clickable-bonus" data-bid="s-c-2">🦊</span><span class="bonus-label-top badge-b clickable-bonus" data-bid="s-c-3">?</span><span class="bonus-label-top badge-g clickable-bonus" data-bid="s-c-4">?</span><span class="bonus-label-top badge-p clickable-bonus" data-bid="s-c-5">?</span>
+                    <div class="silver-bonuses">
+                        <span class="clickable-bonus" style="font-weight: 900; text-shadow: 0 1px 2px rgba(0,0,0,0.4);" data-bid="s-c-0">+1</span>
+                        <span class="badge-y clickable-bonus" data-bid="s-c-1">?</span>
+                        <span class="clickable-bonus" style="font-size: 1.4rem;" data-bid="s-c-2">🦊</span>
+                        <span class="badge-b clickable-bonus" data-bid="s-c-3">?</span>
+                        <span class="badge-g clickable-bonus" data-bid="s-c-4">?</span>
+                        <span class="badge-p clickable-bonus" data-bid="s-c-5">?</span>
                     </div>
                     <div class="silver-grid"></div>
                     <div class="silver-scores">
@@ -71,26 +84,34 @@
 
                 <!-- Yellow Zone -->
                 <div class="zone yellow-zone">
-                    <div class="yellow-scores">
-                        <div class="score-pair"><span class="cross-count">1</span><span class="star-label">3</span></div>
-                        <div class="score-pair"><span class="cross-count">2</span><span class="star-label">10</span></div>
-                        <div class="score-pair"><span class="cross-count">3</span><span class="star-label">21</span></div>
-                        <div class="score-pair"><span class="cross-count">4</span><span class="star-label">36</span></div>
-                        <div class="score-pair"><span class="cross-count">5</span><span class="star-label">55</span></div>
-                        <div class="score-pair"><span class="cross-count">6</span><span class="star-label">75</span></div>
-                        <div class="score-pair"><span class="cross-count">7</span><span class="star-label">96</span></div>
-                        <div class="score-pair"><span class="cross-count">8</span><span class="star-label">118</span></div>
-                        <div class="score-pair"><span class="cross-count">9</span><span class="star-label">141</span></div>
-                        <div class="score-pair"><span class="cross-count">10</span><span class="star-label">165</span></div>
-                    </div>
-                    <div class="yellow-grid-wrapper">
-                        <div class="yellow-grid"></div>
-                                                <div class="yellow-row-bonuses">
-                            <span class="badge-b clickable-bonus" data-bid="y-r-0">?</span><span class="fox-badge clickable-bonus" data-bid="y-r-1">🔙</span><span class="badge-y clickable-bonus" data-bid="y-r-2">?</span><span class="badge-g clickable-bonus" data-bid="y-r-3">?</span><span class="badge-p clickable-bonus" data-bid="y-r-4">?</span>
+                    <div class="yellow-zone-flex">
+
+
+                        <!-- Le quadrillage et les bonus à droite -->
+                        <div class="yellow-right-part">
+                            <div class="yellow-grid-wrapper">
+                                <div class="yellow-grid"></div>
+                                <div class="yellow-row-bonuses">
+                                    <span class="badge-b clickable-bonus" data-bid="y-r-0">?</span><span class="fox-badge clickable-bonus" data-bid="y-r-1">🔙</span><span class="badge-y clickable-bonus" data-bid="y-r-2">?</span><span class="badge-g clickable-bonus" data-bid="y-r-3">?</span><span class="badge-p clickable-bonus" data-bid="y-r-4">?</span>
+                                </div>
+                            </div>
+                            <div class="yellow-col-bonuses">
+                                <span class="fox-badge clickable-bonus" data-bid="y-c-0">🔄</span><span class="fox-badge clickable-bonus" data-bid="y-c-1">+1</span><span class="badge-s clickable-bonus" data-bid="y-c-2">?</span><span class="fox-badge clickable-bonus" data-bid="y-c-3">🦊</span>
+                            </div>
                         </div>
-                    </div>
-                                        <div class="yellow-col-bonuses">
-                        <span class="fox-badge clickable-bonus" data-bid="y-c-0">🔄</span><span class="fox-badge clickable-bonus" data-bid="y-c-1">+1</span><span class="badge-s clickable-bonus" data-bid="y-c-2">?</span><span class="fox-badge clickable-bonus" data-bid="y-c-3">🦊</span>
+                        <!-- Les scores passent sur 2 colonnes à gauche -->
+                        <div class="yellow-scores">
+                            <div class="score-pair"><span class="cross-count">1</span><span class="star-label">3</span></div>
+                            <div class="score-pair"><span class="cross-count">2</span><span class="star-label">10</span></div>
+                            <div class="score-pair"><span class="cross-count">3</span><span class="star-label">21</span></div>
+                            <div class="score-pair"><span class="cross-count">4</span><span class="star-label">36</span></div>
+                            <div class="score-pair"><span class="cross-count">5</span><span class="star-label">55</span></div>
+                            <div class="score-pair"><span class="cross-count">6</span><span class="star-label">75</span></div>
+                            <div class="score-pair"><span class="cross-count">7</span><span class="star-label">96</span></div>
+                            <div class="score-pair"><span class="cross-count">8</span><span class="star-label">118</span></div>
+                            <div class="score-pair"><span class="cross-count">9</span><span class="star-label">141</span></div>
+                            <div class="score-pair"><span class="cross-count">10</span><span class="star-label">165</span></div>
+                        </div>
                     </div>
                 </div>
             </div>

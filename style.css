@@ -24,12 +24,21 @@
 * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
 body { margin: 0; padding: 0; background: var(--bg-dark); color: var(--text-light); }
 
+
+
 header {
     display: flex; justify-content: space-between; align-items: center;
     padding: 12px 20px; background: #111115; position: sticky; top: 0; z-index: 100;
     box-shadow: 0 4px 15px rgba(0,0,0,0.5);
 }
 .header-left { display: flex; align-items: center; gap: 15px; }
+
+.sticky-top {
+    position: sticky; top: 65px; z-index: 100;
+    background: var(--bg-dark);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+}
+
 header h1 { margin: 0; font-size: 1.5rem; letter-spacing: 0.5px; }
 .icon-btn {
     background: linear-gradient(145deg, #555, #333); border: none; color: white;
@@ -117,11 +126,20 @@ header h1 { margin: 0; font-size: 1.5rem; letter-spacing: 0.5px; }
 
 /* Zones 3D */
 .zone {
-    padding: 20px; border-radius: 24px;
+    padding: 20px 20px 35px 20px; /* Plus d'espace en bas */
+    border-radius: 24px;
     box-shadow: inset 0 2px 5px rgba(255,255,255,0.3), 0 8px 20px rgba(0,0,0,0.5);
-    overflow-x: auto; width: max-content; max-width: 100%;
+    overflow-x: auto;
+    /* Surtout pas de overflow-y: hidden ici */
+    width: max-content; max-width: 100%;
 }
 .silver-zone { background: var(--silver-grad); flex: 0 0 auto; min-width: 0; }
+.yellow-zone-flex {
+    display: flex; align-items: center; gap: 20px;width: max-content;
+}
+.yellow-right-part {
+    display: flex; flex-direction: column;
+}
 .yellow-zone { background: var(--yellow-grad); flex: 0 0 auto; min-width: 0; }
 .blue-zone { background: var(--blue-grad); }
 .green-zone { background: var(--green-grad); }
@@ -161,16 +179,29 @@ header h1 { margin: 0; font-size: 1.5rem; letter-spacing: 0.5px; }
 .circled { border: 4px solid #111; border-radius: 50%; }
 
 /* Silver */
-.silver-bonuses { display: grid; grid-template-columns: repeat(6, var(--box-size)); gap: var(--box-gap); justify-items: center; margin-bottom: 10px; font-size: 1.2rem; }
-.silver-scores { display: grid; grid-template-columns: repeat(6, var(--box-size)); gap: var(--box-gap); justify-items: center; margin-top: 10px; font-size: 0.95rem; color: #fff; font-weight: bold; text-shadow: 0 1px 2px rgba(0,0,0,0.4); }
+.silver-bonuses {
+    display: grid;
+    grid-template-columns: repeat(6, var(--box-size));
+    gap: var(--box-gap);
+    justify-items: center;
+    align-items: center; /* La ligne magique pour aligner verticalement */
+    margin-bottom: 10px;
+    font-size: 1.2rem;
+}.silver-scores { display: grid; grid-template-columns: repeat(6, var(--box-size)); gap: var(--box-gap); justify-items: center; margin-top: 10px; font-size: 0.95rem; color: #fff; font-weight: bold; text-shadow: 0 1px 2px rgba(0,0,0,0.4); }
 .silver-grid { display: grid; grid-template-columns: repeat(6, var(--box-size)); gap: var(--box-gap); justify-content: start; }
 .silver-row-0 { color: var(--yellow-bg); }
 .silver-row-1 { color: var(--blue-bg); }
 .silver-row-2 { color: var(--green-bg); }
 .silver-row-3 { color: var(--pink-bg); }
 
-/* Yellow */
+/* Yellow
 .yellow-scores { display: flex; justify-content: space-between; font-size: 1.05rem; font-weight: 900; color: #111; margin-bottom: 10px; padding: 0 5px; text-shadow: 0 1px 1px rgba(255,255,255,0.4); }
+*/
+.yellow-scores {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px 12px;
+    font-size: 1.05rem; font-weight: 900; color: #111;
+    margin: 0; padding: 0; text-shadow: 0 1px 1px rgba(255,255,255,0.4);
+}
 .yellow-grid-wrapper { display: flex; align-items: center; gap: 12px; }
 .yellow-grid {
     display: grid;
@@ -188,10 +219,46 @@ header h1 { margin: 0; font-size: 1.5rem; letter-spacing: 0.5px; }
 .yellow-col-bonuses { display: grid; grid-template-columns: repeat(4, var(--box-size)); gap: var(--box-gap); justify-items: center; margin-top: 10px; font-size: 1.2rem; text-shadow: 0 1px 2px rgba(0,0,0,0.3); }
 
 /* Horizontal Tracks (Blue, Green, Pink) */
-.col-container { display: flex; flex-direction: column; align-items: center; }
-.track { display: flex; gap: var(--box-gap); align-items: center; }
-.track-separator { color: white; font-weight: bold; padding: 0 4px; font-size: 1.3rem; text-shadow: 0 1px 2px rgba(0,0,0,0.3); }
+/* 1. On interdit la compression pour garder tes beaux rectangles */
+.col-container {
+    display: flex; flex-direction: column; align-items: center;
+    flex-shrink: 0;
+}
 
+/* 2. On allonge la hauteur des cases comme tu l'as demandé */
+.blue-btn, .green-btn, .pink-btn {
+    height: calc(var(--box-size) + 14px);
+    border-radius: 16px;
+}
+
+/* 3. Séparateurs (bleu/rose) : largeur fixe et propre (fini le texte qui bave) */
+.track-separator {
+    width: 16px; padding: 0; margin: 0;
+    display: flex; justify-content: center; align-items: center; flex-shrink: 0;
+    color: white; font-weight: bold; font-size: 1.3rem; text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+
+/* 4. On restructure la piste verte pour que la largeur globale matche la bleue */
+.green-pair {
+    display: flex; gap: var(--box-gap);
+    padding: 8px var(--box-gap); /* Le padding latéral s'aligne sur l'équation */
+    align-items: center; position: relative;
+    background: rgba(0,0,0,0.1); border-radius: 20px; flex-shrink: 0;
+}
+.green-minus {
+    width: 16px; /* Même largeur que le >= */
+    display: flex; justify-content: center; align-self: center; flex-shrink: 0;
+    color: white; font-weight: bold; font-size: 1.8rem; margin-bottom: 24px; text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+/* 5. Comportement des pistes de fond */
+.track {
+    display: flex; gap: var(--box-gap); align-items: center; width: max-content;
+}
+.green-track {
+    /* Ce calcul compense exactement le nombre de cases pour que Vert = Bleu = Rose */
+    gap: calc(16px - (var(--box-gap) * 0.4));
+}
 /* Labels */
 .track-score-label, .bonus-label-top { font-size: 1rem; color: white; font-weight: bold; margin-bottom: 6px; height: 18px; text-align: center; text-shadow: 0 1px 2px rgba(0,0,0,0.4); }
 .bonus-label-bottom { font-size: 1.2rem; margin-top: 8px; height: 24px; text-align: center; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3)); }
@@ -302,4 +369,37 @@ header h1 { margin: 0; font-size: 1.5rem; letter-spacing: 0.5px; }
 .clickable-bonus.crossed::after {
     content: 'X'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
     color: red; font-size: 1.5rem; font-weight: bold; text-shadow: 0 0 2px #fff;
+}
+
+/* Système de Notifications (Toasts) */
+.toast-container {
+    position: fixed;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column-reverse; /* Empile les nouveaux au-dessus */
+    gap: 12px;
+    z-index: 9999;
+    pointer-events: none; /* Empêche de bloquer les clics en dessous */
+}
+.toast {
+    background: linear-gradient(145deg, #2a2a30, #1a1a20);
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: 30px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+    border: 1px solid #444;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    opacity: 0;
+    transform: translateY(20px) scale(0.9);
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55); /* Effet rebond dynamique */
+}
+.toast.show {
+    opacity: 1;
+    transform: translateY(0) scale(1);
 }

@@ -16,6 +16,8 @@ let state = {
 };
 
 let stateHistory = [];
+let previousUnlockedBids = null;
+
 function pushHistory() {
     stateHistory.push(JSON.parse(JSON.stringify(state)));
     if (stateHistory.length > 50) stateHistory.shift(); // keep last 50
@@ -29,12 +31,12 @@ const yellowLayout = [
     [null, {i:8, v:5}, null, {i:9, v:4}]
 ];
 
-// Fixed green multipliers! Pair 1 is x2, x2. Pair 2 is x2, x2, etc. (Actually, wait, if the board has x1 for the second box, but the score logic behaves as if it's the SAME multiplier... No wait, if the rulebook says 1x2=2 but the physical board says x1, the standard accepted logic is that the second box is ALWAYS x1! 
-// Let's use x1 for the second box as the physical board clearly shows in "Doppel so clever". The French rulebook simply contains a known typo in its example. The German rulebook says "1x1=1". 
-// But wait! "Doppelt so clever" multiplier system is: first box is x2, second is x1. Third is x2, fourth is x1. 
-// "If you place a 6 in a x2 space and a 1 in a x2 space" -> this internet quote was misleading! 
+// Fixed green multipliers! Pair 1 is x2, x2. Pair 2 is x2, x2, etc. (Actually, wait, if the board has x1 for the second box, but the score logic behaves as if it's the SAME multiplier... No wait, if the rulebook says 1x2=2 but the physical board says x1, the standard accepted logic is that the second box is ALWAYS x1!
+// Let's use x1 for the second box as the physical board clearly shows in "Doppel so clever". The French rulebook simply contains a known typo in its example. The German rulebook says "1x1=1".
+// But wait! "Doppelt so clever" multiplier system is: first box is x2, second is x1. Third is x2, fourth is x1.
+// "If you place a 6 in a x2 space and a 1 in a x2 space" -> this internet quote was misleading!
 // The actual German rulebook says "1x1 = 1".
-const greenMults = [2, 2, 2, 1, 3, 3, 3, 2, 3, 1, 4, 1]; 
+const greenMults = [2, 2, 2, 1, 3, 3, 3, 2, 3, 1, 4, 1];
 
 const bPts = [0, 1, 3, 6, 10, 15, 21, 28, 36, 45, 55, 66, 78];
 const bBonuses = ['', '🔙', '<span class="badge-y">?</span>', '', '+1', '🔄', '<span class="badge-p">?</span>', '', '🦊', '🔙', '', '<span class="badge-g">?</span>'];
@@ -42,7 +44,7 @@ const bBonuses = ['', '🔙', '<span class="badge-y">?</span>', '', '+1', '🔄'
 const pConds = ['', '', '>=2', '>=3', '>=4', '>=5', '>=6', '<=2', '<=3', '<=4', '<=5', '<=6'];
 const pBonuses = ['', '', '🔄', '🔙', '+1', '<span class="badge-g">?</span>', '<span class="badge-y">?</span>', '🦊', '<span class="badge-s">?</span>', '🔄', '<span class="badge-b">?</span>', '<span class="badge-y">?</span>'];
 
-let currentAction = null; 
+let currentAction = null;
 
 function init() {
     loadState();
@@ -187,8 +189,14 @@ function meetsPinkCondition(idx) {
 
 function isActionBonusEarned(bid) {
     if(!bid) return false;
-    const actionBids = ['b-1', 'b-4', 'b-5', 'b-8', 'b-9', 'g-1', 'g-4', 'g-6', 'g-8', 'p-2', 'p-3', 'p-4', 'p-7', 'p-9', 's-c-0', 's-c-2', 'y-c-0', 'y-c-1', 'y-c-3', 'y-r-1'];
+
+    // On retire 't-return' et 't-plus1' : ce sont des choix manuels !
+    const actionBids = ['b-1', 'b-4', 'b-5', 'b-8', 'b-9', 'g-1', 'g-4', 'g-6', 'g-8', 'p-2', 'p-3', 'p-4', 'p-7', 'p-9', 's-c-0', 's-c-2', 'y-c-0', 'y-c-1', 'y-c-3', 'y-r-1', 't-reroll'];
     if (!actionBids.includes(bid)) return false;
+
+    // Seul le renard (t-reroll) s'auto-valide à 6 actions
+    if (bid === 't-reroll') return getEarnedActions().reroll >= 6;
+
     if (bid.startsWith('b-')) return state.blue[parseInt(bid.split('-')[1])];
     if (bid.startsWith('g-')) return state.green[parseInt(bid.split('-')[1])] > 0;
     if (bid.startsWith('p-')) return meetsPinkCondition(parseInt(bid.split('-')[1]));
@@ -221,19 +229,60 @@ function isActionBonusEarned(bid) {
 }
 
 function updateUI() {
-    document.querySelectorAll('.clickable-bonus').forEach((el, idx) => {
-        let bid = el.getAttribute('data-bid');
-        let val = state.bonusMarks[idx] || 0;
-        
-        el.classList.remove('highlighted', 'crossed');
-        if (val === 2 || isActionBonusEarned(bid)) {
-            el.classList.add('crossed');
-        } else if (val === 1) {
-            el.classList.add('highlighted');
-        }
-    });
+      let currentUnlockedBids = [];
 
-    // Undo button
+      // On scanne tout le plateau
+      document.querySelectorAll('.clickable-bonus').forEach(el => {
+          let bid = el.getAttribute('data-bid');
+          if (isBonusUnlocked(bid)) currentUnlockedBids.push(bid);
+      });
+
+      // On ajoute les passages de tours
+      if (state.round >= 1) currentUnlockedBids.push('round-1');
+      if (state.round >= 2) currentUnlockedBids.push('round-2');
+      if (state.round >= 3) currentUnlockedBids.push('round-3');
+      if (state.round >= 4) currentUnlockedBids.push('round-4');
+
+      // On déclenche les notifs pour les nouveautés
+      if (previousUnlockedBids !== null) {
+                let newBids = currentUnlockedBids.filter(b => !previousUnlockedBids.includes(b));
+                newBids.forEach(bid => {
+                    let message = "";
+                    let el = document.querySelector(`.clickable-bonus[data-bid="${bid}"]`);
+
+                    if (el) {
+                        // SÉCURITÉ 1 : On ignore purement et simplement les cases qui n'ont pas de texte/bonus
+                        if (el.innerHTML.trim() === "") return;
+
+                        // SÉCURITÉ 2 : On clone et on nettoie les classes de "sélection" pour le popup
+                        let clone = el.cloneNode(true);
+                        clone.classList.remove('clickable-bonus', 'crossed', 'highlighted');
+                        message = clone.outerHTML;
+                    } else {
+                        // Messages textes pour les passages de tours
+                        if (bid === 'round-1') message = "🔄 Relance !";
+                        if (bid === 'round-2') message = "➕1 Action !";
+                        if (bid === 'round-3') message = "🔙 Retour !";
+                        if (bid === 'round-4') message = "❓ Bonus Ultime (au choix) !";
+                    }
+                    if (message) showToast(`🎁 Bonus débloqué : ${message}`);
+                });
+            }
+            previousUnlockedBids = currentUnlockedBids;
+      document.querySelectorAll('.clickable-bonus').forEach((el, idx) => {
+              let bid = el.getAttribute('data-bid');
+              let val = state.bonusMarks[idx] || 0;
+
+              // On utilise ta fonction d'origine qui cible uniquement les auto-bonus !
+              let earned = isActionBonusEarned(bid);
+
+              el.classList.remove('highlighted', 'crossed');
+              if (val === 2 || earned) {
+                  el.classList.add('crossed'); // Clic manuel OU bonus automatique
+              } else if (val === 1) {
+                  el.classList.add('highlighted');
+              }
+          });
     const undoBtn = document.getElementById('undo-btn');
     if (undoBtn) undoBtn.disabled = stateHistory.length === 0;
 
@@ -248,8 +297,8 @@ function updateUI() {
         container.innerHTML = '';
         const earnedCount = earned[type];
         const usedCount = state.usedActions[type];
-        
-        for(let i=0; i<7; i++) {
+
+        for(let i=0; i<6; i++) {
             let div = document.createElement('div');
             div.className = 'tracker-circle';
             div.dataset.type = type;
@@ -364,10 +413,10 @@ function setupEvents() {
                 let type = e.target.dataset.type;
                 const earned = getEarnedActions()[type];
                 let used = state.usedActions[type];
-                
+
                 if (e.target.classList.contains('circled') && !e.target.classList.contains('crossed')) {
                     if (used < earned) { pushHistory(); state.usedActions[type]++; }
-                } 
+                }
                 else if (e.target.classList.contains('crossed')) {
                     if (used > 0) { pushHistory(); state.usedActions[type]--; }
                 }
@@ -514,7 +563,8 @@ function calculateScores() {
     if (state.yellow[1]>=1 && state.yellow[5]>=1 && state.yellow[9]>=1) foxes++;
     if (state.blue[8] > 0) foxes++;
     if (state.green[6] > 0) foxes++;
-    if (state.pink[7] >= 2) foxes++; 
+    if (state.pink[7] >= 2) foxes++;
+    if (getEarnedActions().reroll >= 6) foxes++;
 
     let minZone = Math.min(sScore, yScore, bScore, gScore, pScore);
     let fScore = foxes * minZone;
@@ -531,4 +581,60 @@ function calculateScores() {
     document.getElementById('total-score').innerText = total;
 }
 
+function isBonusUnlocked(bid) {
+    if (!bid) return false;
+    // Trackers
+    if (bid === 't-reroll') return getEarnedActions().reroll >= 6;
+    if (bid === 't-return') return getEarnedActions().return >= 6;
+    if (bid === 't-plus1') return getEarnedActions().plus1 >= 6;
+    // Gris
+    if (bid.startsWith('s-c-')) {
+        let c = parseInt(bid.split('-')[2]);
+        return state.silver[0][c] && state.silver[1][c] && state.silver[2][c] && state.silver[3][c];
+    }
+    // Jaune
+    if (bid.startsWith('y-r-')) {
+        let r = parseInt(bid.split('-')[2]);
+        let y = state.yellow;
+        if (r===0) return y[0]>=1 && y[1]>=1;
+        if (r===1) return y[2]>=1 && y[3]>=1;
+        if (r===2) return y[4]>=1 && y[5]>=1;
+        if (r===3) return y[6]>=1 && y[7]>=1;
+        if (r===4) return y[8]>=1 && y[9]>=1;
+    }
+    if (bid.startsWith('y-c-')) {
+        let c = parseInt(bid.split('-')[2]);
+        let y = state.yellow;
+        if (c===0) return y[2]>=1 && y[6]>=1;
+        if (c===1) return y[0]>=1 && y[4]>=1 && y[8]>=1;
+        if (c===2) return y[3]>=1 && y[7]>=1;
+        if (c===3) return y[1]>=1 && y[5]>=1 && y[9]>=1;
+    }
+    // Couleur directes
+    if (bid.startsWith('b-')) return state.blue[parseInt(bid.split('-')[1])] > 0;
+    if (bid.startsWith('g-')) return state.green[parseInt(bid.split('-')[1])] > 0;
+    if (bid.startsWith('p-')) return meetsPinkCondition(parseInt(bid.split('-')[1]));
+
+    return false;
+}
+
+function showToast(message) {
+    let container = document.getElementById('toast-container');
+    if(!container) {
+        container = document.createElement('div');
+        container.id = 'toast-container';
+        container.className = 'toast-container';
+        document.body.appendChild(container);
+    }
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.innerHTML = message;
+    container.appendChild(toast);
+
+    setTimeout(() => toast.classList.add('show'), 10);
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+    }, 3500);
+}
 init();
